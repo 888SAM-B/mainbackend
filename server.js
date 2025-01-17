@@ -175,7 +175,7 @@ app.get("/courses", authenticateJWT, async (req, res) => {
 });
 // Save Results Route
 app.post("/save-results", authenticateJWT, async (req, res) => {
-  const { correctAnswers,willing } = req.body;
+  const { correctAnswers, willing } = req.body;
 
   if (typeof correctAnswers !== "number") {
     return res.status(400).json({ message: "Invalid input for correct answers." });
@@ -187,18 +187,27 @@ app.post("/save-results", authenticateJWT, async (req, res) => {
       return res.status(404).json({ message: "User not found!" });
     }
 
-    // Save the number of correct answers (You can extend the schema to save a history of tests)
+    console.log("User found:", user);
+
+    // Update course based on conditions
+    if (correctAnswers >= 5 && willing === 1) {
+      user.course = 'advancedjava';
+    } else {
+      user.course = 'java';
+    }
+
+    user.initial = correctAnswers; // Update initial field
+
+    console.log("Updated course:", user.course);
     
-    user.initial = correctAnswers; // Update the `initial` field to store the result
-    console.log(willing)
-    if(correctAnswers>=5 && willing===1){
-      user.course='advancedjava'
-    }
-    else{
-      user.course='java'
-    }
+    // Save changes
     await user.save();
-    res.json({ message: "Results saved successfully!" });
+
+    // Verify changes by re-fetching from DB
+    const updatedUser = await User.findById(req.user.id);
+    console.log("Final course in DB:", updatedUser.course);
+
+    res.json({ message: "Results saved successfully!", course: updatedUser.course });
   } catch (error) {
     console.error("Error saving results:", error);
     res.status(500).json({ message: "Failed to save results." });
