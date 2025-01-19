@@ -193,7 +193,7 @@ app.post("/save-results", authenticateJWT, async (req, res) => {
     if (correctAnswers >= 5 && willing === 1) {
       user.course = 'advancedjava';
     } else {
-      user.course = 'java';
+      user.course =user.course;
     }
 
     user.initial = correctAnswers; // Update initial field
