@@ -153,7 +153,7 @@ app.get("/test", authenticateJWT, async (req, res) => {
   try {
     const selecte = await User.findById(req.user.id);
     selectedCourse1=selecte.course;
-    const url=`https://testapi-t2fc.onrender.com/python`;
+    const url=`https://testapidyc.up.railway.app/python`;
     const response = await axios.get(url.trim());
     res.json(response.data);  
   } catch (error) {
@@ -174,7 +174,7 @@ app.get("/finaltest", authenticateJWT, async (req, res) => {
         } else {
           fc=selectedCourse1;
         }
-    const url=`https://testapi-t2fc.onrender.com/javafa`;
+    const url=`https://testapidyc.up.railway.app/javafa`;
     console.log(url)
     const response = await axios.get(url.trim());
     res.json(response.data);  
@@ -187,7 +187,7 @@ app.get("/courses", authenticateJWT, async (req, res) => {
 try {
   const selecte = await User.findById(req.user.id);
   selectedCourse1=selecte.course;
-  // const url=`https://testapi-t2fc.onrender.com/python`;
+  // const url=`https://testapidyc.up.railway.app/python`;
   const url=`https://api-1-ycbp.onrender.com/${selectedCourse1}`
   // const url=`http://localhost:8000/${selectedCourse1}`
   const response = await axios.get(url.trim());
