@@ -32,9 +32,24 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   course: { type: String },
   initial: { type: Number },
-  state: { type: Number },
+  state: { type: Number,default:0},
+  java:{type:Number,default:0},
+  javaprogress:{type:Number,default:1},
+  python:{type:Number,default:0},
+  pythonprogress:{type:Number,default:1},
+  js:{type:Number,default:0},
+  jsprogress:{type:Number,default:1},
+  html:{type:Number,default:0},
+  htmlprogress:{type:Number,default:1},
+  css:{type:Number,default:0},
+  cssprogress:{type:Number,default:1},
+  willing:{type:Number,default:0},
   completedcourses:{type:Array},
+  selectedcourses:{type:Array},
 });
+
+
+
 
 
 // Hash password before saving
@@ -46,6 +61,9 @@ userSchema.pre('save', async function (next) {
 });
 
 const User = mongoose.model("User", userSchema);
+
+
+
 
 // Registration Route
 app.post("/register", async (req, res) => {
@@ -70,6 +88,9 @@ app.post("/register", async (req, res) => {
     res.status(500).json({ message: "Error registering user" });
   }
 });
+
+
+
 
 // Login Route with JWT Token
 app.post("/login", async (req, res) => {
@@ -96,6 +117,9 @@ app.post("/login", async (req, res) => {
   }
 });
 
+
+
+
 // Middleware to protect routes
 const authenticateJWT = (req, res, next) => {
   const token = req.header("Authorization") && req.header("Authorization").split(" ")[1];
@@ -113,6 +137,9 @@ const authenticateJWT = (req, res, next) => {
   });
 };
 
+
+
+
 // Profile Route (protected)
 app.get("/profile", authenticateJWT, async (req, res) => {
   try {
@@ -123,9 +150,11 @@ app.get("/profile", authenticateJWT, async (req, res) => {
   }
 });
 
+
+
+
 app.post("/update-course", authenticateJWT, async (req, res) => {
   const { course } = req.body;
-  
   selectedCourse=course;
   if (!course) {
     return res.status(400).json({ message: "Course is required!" });
@@ -136,11 +165,27 @@ app.post("/update-course", authenticateJWT, async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found!" });
     }
-
+    
     user.course = course;
-    selectedCourse=user.course;
-    user.initial = 1;
-    user.state=0; // Assuming this indicates the initial test has been started
+    console.log("course",user.course)
+
+     if(user.course.toLowerCase()==="java" || user.course==="advancedjava"){
+      user.state=user.java
+    }
+    else if(user.course.toLowerCase()==="python" || user.course==="advancedpython"){
+      user.state=user.python
+    }
+    else if(user.course.toLowerCase()==="js" || user.course==="advancedjs"){
+      user.state=user.js
+    }
+    else if(user.course.toLowerCase()==="html" || user.course==="advancedhtml"){
+      user.state=user.html
+    }
+    else if(user.course.toLowerCase()==="css" || user.course==="advancedcss"){
+      user.state=user.css
+    }
+
+    // Assuming this indicates the initial test has been started
     await user.save();
     res.json({ message: "Course updated successfully!" ,user: user});
   } catch (error) {
@@ -149,32 +194,20 @@ app.post("/update-course", authenticateJWT, async (req, res) => {
   }
 });
 
+
+
+
 app.get("/test", authenticateJWT, async (req, res) => {
   try {
     const selecte = await User.findById(req.user.id);
     selectedCourse1=selecte.course;
-    const url=`https://testapidyc.up.railway.app/python`;
-    const response = await axios.get(url.trim());
-    res.json(response.data);  
-  } catch (error) {
-    console.error("Error fetching courses:", error.message);
-    res.status(500).json({ message: "Failed to fetch courses." });
-  }
-});
-app.get("/finaltest", authenticateJWT, async (req, res) => {
-  try {
-    const selecte = await User.findById(req.user.id);
-    selectedCourse1=selecte.course;
-
-    
-        if (selectedCourse1 === 'advancedjava') {
-          fc='java';
-        } else if (selectedCourse1 === 'advancedpython') {
-          fc='python';
-        } else {
-          fc=selectedCourse1;
-        }
-    const url=`https://testapidyc.up.railway.app/javafa`;
+    if(selectedCourse1.length>8 && selectedCourse1[0]=="a"){
+      selectedCourse1=selectedCourse1.slice(8,selectedCourse1.length)
+      console.log(selectedCourse1)
+    }
+    selecte.initial=1;
+    selecte.save();
+    const url=`https://testapidyc.up.railway.app/${selectedCourse1}`;
     console.log(url)
     const response = await axios.get(url.trim());
     res.json(response.data);  
@@ -183,13 +216,37 @@ app.get("/finaltest", authenticateJWT, async (req, res) => {
     res.status(500).json({ message: "Failed to fetch courses." });
   }
 });
+
+
+
+
+app.get("/finaltest", authenticateJWT, async (req, res) => {
+  try {
+    const selecte = await User.findById(req.user.id);
+    selectedCourse1=selecte.course;
+      if(selectedCourse1.length>8){
+        selectedCourse1=selectedCourse1.slice(8,selectedCourse1.length)
+        console.log(selectedCourse1)
+      }
+    const url=`https://testapidyc.up.railway.app/${selectedCourse1}fa`;
+    console.log(url)
+    const response = await axios.get(url.trim());
+    res.json(response.data);  
+  } catch (error) {
+    console.error("Error fetching courses:", error.message);
+    res.status(500).json({ message: "Failed to fetch courses." });
+  }
+});
+
+
+
+
 app.get("/courses", authenticateJWT, async (req, res) => {
 try {
   const selecte = await User.findById(req.user.id);
   selectedCourse1=selecte.course;
-  // const url=`https://testapidyc.up.railway.app/python`;
-  const url=`https://api-1-ycbp.onrender.com/${selectedCourse1}`
-  // const url=`http://localhost:8000/${selectedCourse1}`
+  const url=`https://courseapi-production-d73d.up.railway.app/${selectedCourse1}`
+  console.log(url)
   const response = await axios.get(url.trim());
   res.json(response.data); 
 } catch (error) {
@@ -197,6 +254,10 @@ try {
   res.status(500).json({ message: "Failed to fetch courses." });
 }
 });
+
+
+
+
 
 // Save Results Route
 app.post("/save-results", authenticateJWT, async (req, res) => {
@@ -213,12 +274,60 @@ try {
   }
 
   console.log("User found:", user);
-
+  user.selectedcourses.push(user.course)
   // Update course based on conditions
   if (correctAnswers >= 5 && willing === 1) {
-    user.course = 'advancedjava';
+    user.willing=1;
+    if(user.course.toLowerCase()=="java"){
+      user.course="advancedjava";
+      user.javaprogress=19;
+    }
+    else if(user.course.toLowerCase()=="python"){
+      user.course="advancedpython";
+      user.pythonprogress=19;
+    }
+    else if(user.course.toLowerCase()=="js"){
+      user.course="advancedjs"
+      user.jsprogress=19;
+    }
+    else if(user.course.toLowerCase()=="css"){
+      user.course="advancedcss"
+      user.cssprogress=16;
+    }
+    else if(user.course.toLowerCase()=="html"){
+      user.course="advancedhtml"
+      user.htmlprogress=18;
+    }
+    else{
+      // user.course="unknown"
+      console.log("1st if :",user.course)
+    }
   } else {
-    user.course =user.course;
+    user.willing=0;
+    if(user.course.toLowerCase()=="java"){
+      user.course="java";
+      user.javaprogress=29;
+    }
+    else if(user.course.toLowerCase()=="python"){
+      user.course="python";
+      user.pythonprogress=33;
+    }
+    else if(user.course.toLowerCase()=="js"){
+      user.course="js"
+      user.jsprogress=35;
+    }
+    else if(user.course.toLowerCase()=="css"){
+      user.course="css"
+      user.cssprogress=31;
+    }
+    else if(user.course.toLowerCase()=="html"){
+      user.course="html"
+      user.htmlprogress=33;
+    }
+    else{
+      // user.course="unknown"
+      console.log(user.course)
+    }
   }
 
   user.initial = correctAnswers; // Update initial field
@@ -275,11 +384,22 @@ app.post("/save-result-again", authenticateJWT, async (req, res) => {
     // Update course based on conditions
    
     user.course =user.course;
-   
-  
+    if(user.course.toLowerCase()==="java" || user.course==="advancedjava"){
+      user.java=0;
+    }
+    else if(user.course.toLowerCase()==="python" || user.course==="advancedpython"){
+      user.python=0; 
+    }
+    else if(user.course.toLowerCase()==="js" || user.course==="advancedjs"){
+      user.js=0; 
+    }
+    else if(user.course.toLowerCase()==="html" || user.course==="advancedhtml"){
+      user.html=0; 
+    }
+    else if(user.course.toLowerCase()==="css" || user.course==="advancedcss"){
+      user.css=0; 
+    }
      // Update initial field
-  
-    
     user.state=0;
     // Save changes
     await user.save();
@@ -304,11 +424,20 @@ try {
   if (!user) {
     return res.status(404).json({ message: "User not found!" });
   }
-
   // Save the number of correct answers (You can extend the schema to save a history of tests)
-  
   user.state = currentstate; // Update the `initial` field to store the result
   
+  console.log(user.course)
+  if(user.course.toLowerCase()==="java" || user.course==="advancedjava")
+    user.java=currentstate
+  else if(user.course.toLowerCase()==="python" || user.course==="advancedpython")
+    user.python=currentstate;
+  else if(user.course.toLowerCase()==="js" || user.course==="advancedjs")
+    user.js=currentstate;
+  else if(user.course.toLowerCase()==="html" || user.course==="advancedhtml")
+    user.html=currentstate;
+  else if(user.course.toLowerCase()==="css" || user.course==="advancedcss")
+    user.css=currentstate;
   await user.save();
   res.json({ message: "state saved successfully!" });
 } catch (error) {
