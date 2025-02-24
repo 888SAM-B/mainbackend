@@ -48,10 +48,6 @@ const userSchema = new mongoose.Schema({
   selectedcourses:{type:Array},
 });
 
-
-
-
-
 // Hash password before saving
 userSchema.pre('save', async function (next) {
   if (this.isModified('password')) {
@@ -155,7 +151,7 @@ app.get("/profile", authenticateJWT, async (req, res) => {
 
 app.post("/update-course", authenticateJWT, async (req, res) => {
   const { course } = req.body;
-  selectedCourse=course;
+  var selectedCourse=course;
   if (!course) {
     return res.status(400).json({ message: "Course is required!" });
   }
@@ -165,11 +161,26 @@ app.post("/update-course", authenticateJWT, async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found!" });
     }
-    
-    user.course = course;
-    console.log("course",user.course)
+    user.course=selectedCourse
+    if(user.course.toLowerCase()==="html" && user.selectedcourses.includes("CSS") && user.htmlprogress<20){
+        user.course="advancedhtml"
+    }
+    else if(user.course.toLowerCase()==="js" && user.selectedcourses.includes("JS") && user.jsprogress<20){
+      user.course="advancedjs"
+    }
+    else if(user.course.toLowerCase()==="css" && user.selectedcourses.includes("CSS") && user.cssprogress<20){
+      user.course="advancedcss"
+    }
+    else if(user.course.toLowerCase()==="python" && user.selectedcourses.includes("PYTHON") && user.pythonprogress<20){
+      user.course="advancedpython"
+    }
+    else if(user.course.toLowerCase()==="java" && user.selectedcourses.includes("JAVA") && user.javaprogress<20){
+      user.course="advancedjava"
+    }
 
-     if(user.course.toLowerCase()==="java" || user.course==="advancedjava"){
+    // user.course = course;
+    console.log("course",user.course)
+    if(user.course.toLowerCase()==="java" || user.course==="advancedjava"){
       user.state=user.java
     }
     else if(user.course.toLowerCase()==="python" || user.course==="advancedpython"){
