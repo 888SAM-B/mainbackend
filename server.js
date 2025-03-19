@@ -60,6 +60,10 @@ userSchema.pre('save', async function (next) {
 const User = mongoose.model("User", userSchema);
 
 
+app.get('/', (req, res) => {
+  res.send('Server is running successfully!');
+  console.log('Server is running successfully!');
+});
 
 
 // Registration Route
