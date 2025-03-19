@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
@@ -66,7 +67,7 @@ app.post("/register", async (req, res) => {
   const { firstname, lastname, username, password } = req.body;
   const initial=0;
   const states=0;
-  if (!firstname || !lastname || !username || !password) {
+  if (!firstname || !lastname || !username || !password) { 
     return res.status(400).json({ message: "All fields are required!" });
   }
 
@@ -459,7 +460,7 @@ try {
 
 
 // Server listener
-const PORT = 8001;
+const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
