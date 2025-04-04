@@ -378,6 +378,8 @@ app.post("/complete", authenticateJWT, async (req, res) => {
     await user.save();
     res.json({ message: "Course updated successfully!" });
     console.log("Hello"+user.completedcourses);
+    user.initial=req.body.correctAnswers
+    console.log(user.initial)
   } catch (error) {
     console.error("Error updating course:", error);
     res.status(500).json({ message: "Error updating course" });
@@ -400,6 +402,8 @@ app.post("/save-result-again", authenticateJWT, async (req, res) => {
     // Update course based on conditions
    
     user.course =user.course;
+    user.completedcourses = user.completedcourses.filter(course => course !==user.course);
+    console.log(user.completedcourses);
     if(user.course.toLowerCase()==="java" || user.course==="advancedjava"){
       user.java=0;
     }
