@@ -348,6 +348,10 @@ try {
 
   user.initial = correctAnswers; // Update initial field
 
+
+
+
+  
   console.log("Updated course:", user.course);
   
   // Save changes
@@ -374,12 +378,12 @@ app.post("/complete", authenticateJWT, async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found!" });
     }
+    user.initial=req.body.correctAnswers
+    console.log(user.initial)
     user.completedcourses.push(user.course); 
     await user.save();
     res.json({ message: "Course updated successfully!" });
-    console.log("Hello"+user.completedcourses);
-    user.initial=req.body.correctAnswers
-    console.log(user.initial)
+    console.log("Hello"+user.initial);
   } catch (error) {
     console.error("Error updating course:", error);
     res.status(500).json({ message: "Error updating course" });
@@ -400,8 +404,6 @@ app.post("/save-result-again", authenticateJWT, async (req, res) => {
     console.log("User found:", user);
   
     // Update course based on conditions
-   
-    user.course =user.course;
     user.completedcourses = user.completedcourses.filter(course => course !==user.course);
     console.log(user.completedcourses);
     if(user.course.toLowerCase()==="java" || user.course==="advancedjava"){
