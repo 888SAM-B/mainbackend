@@ -16,7 +16,7 @@ app.use(cors());
 
 
 // Connect to MongoDB
-mongoose.connect("mongodb+srv://cubeboardtech:Bsam191004@cluster0.v6b6a.mongodb.net/infodb", {
+mongoose.connect("mongodb+srv://cubeboardtech:Bsam191004@cluster0.v6b6a.mongodb.net/newDB", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {
@@ -223,7 +223,7 @@ app.get("/test", authenticateJWT, async (req, res) => {
     }
     selecte.initial=1;
     selecte.save();
-    const url=`https://testapidyc.up.railway.app/${selectedCourse1}`;
+    const url=`https://testapi-t2fc.onrender.com/${selectedCourse1}`;
     console.log(url)
     const response = await axios.get(url.trim());
     res.json(response.data);  
@@ -261,7 +261,7 @@ app.get("/courses", authenticateJWT, async (req, res) => {
 try {
   const selecte = await User.findById(req.user.id);
   selectedCourse1=selecte.course;
-  const url=`https://courseapi-production-d73d.up.railway.app/${selectedCourse1}`
+  const url=`http://localhost:8000/${selectedCourse1}`
   console.log(url)
   const response = await axios.get(url.trim());
   res.json(response.data); 
