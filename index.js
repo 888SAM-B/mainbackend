@@ -244,7 +244,7 @@ app.get("/finaltest", authenticateJWT, async (req, res) => {
         selectedCourse1=selectedCourse1.slice(8,selectedCourse1.length)
         console.log(selectedCourse1)
       }
-    const url=`https://testapidyc.up.railway.app/${selectedCourse1}fa`;
+    const url=`https://testapi-t2fc.onrender.com/${selectedCourse1}fa`;
     console.log(url)
     const response = await axios.get(url.trim());
     res.json(response.data);  
@@ -261,7 +261,7 @@ app.get("/courses", authenticateJWT, async (req, res) => {
 try {
   const selecte = await User.findById(req.user.id);
   selectedCourse1=selecte.course;
-  const url=`https://courseapi-production-d73d.up.railway.app/${selectedCourse1}`
+  const url=`https://courseapi-uudi.onrender.com/${selectedCourse1}`
   console.log(url)
   const response = await axios.get(url.trim());
   res.json(response.data); 
