@@ -223,7 +223,7 @@ app.get("/test", authenticateJWT, async (req, res) => {
     }
     selecte.initial=1;
     selecte.save();
-    const url=`https://testapi-t2fc.onrender.com/${selectedCourse1}`;
+    const url=`https://testapidyc.up.railway.app/${selectedCourse1}`;
     console.log(url)
     const response = await axios.get(url.trim());
     res.json(response.data);  
