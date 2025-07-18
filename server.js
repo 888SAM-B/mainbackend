@@ -16,7 +16,7 @@ app.use(cors());
 
 
 // Connect to MongoDB
-mongoose.connect("mongodb+srv://cubeboardtech:Bsam191004@cluster0.v6b6a.mongodb.net/newDB", {
+mongoose.connect("mongodb+srv://cubeboardtech:ramya191004@cluster0.lfwtg8i.mongodb.net/infodb", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {
@@ -223,7 +223,7 @@ app.get("/test", authenticateJWT, async (req, res) => {
     }
     selecte.initial=1;
     selecte.save();
-    const url=`https://testapidyc.up.railway.app/${selectedCourse1}`;
+    const url=`https://testapi-t2fc.onrender.com/${selectedCourse1}`;
     console.log(url)
     const response = await axios.get(url.trim());
     res.json(response.data);  
@@ -244,7 +244,7 @@ app.get("/finaltest", authenticateJWT, async (req, res) => {
         selectedCourse1=selectedCourse1.slice(8,selectedCourse1.length)
         console.log(selectedCourse1)
       }
-    const url=`https://testapidyc.up.railway.app/${selectedCourse1}fa`;
+    const url=`https://testapi-t2fc.onrender.com/${selectedCourse1}fa`;
     console.log(url)
     const response = await axios.get(url.trim());
     res.json(response.data);  
@@ -261,7 +261,7 @@ app.get("/courses", authenticateJWT, async (req, res) => {
 try {
   const selecte = await User.findById(req.user.id);
   selectedCourse1=selecte.course;
-  const url=`http://localhost:8000/${selectedCourse1}`
+  const url=`https://courseapi-uudi.onrender.com/${selectedCourse1}`
   console.log(url)
   const response = await axios.get(url.trim());
   res.json(response.data); 
@@ -467,7 +467,6 @@ try {
   res.status(500).json({ message: "Failed to save state." });
 }
 });
-
 
 // Server listener
 const PORT = process.env.PORT || 5000;

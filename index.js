@@ -16,7 +16,7 @@ app.use(cors());
 
 
 // Connect to MongoDB
-mongoose.connect("mongodb+srv://cubeboardtech:Bsam191004@cluster0.v6b6a.mongodb.net/infodb", {
+mongoose.connect("mongodb+srv://cubeboardtech:ramya191004@cluster0.lfwtg8i.mongodb.net/infodb", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {
